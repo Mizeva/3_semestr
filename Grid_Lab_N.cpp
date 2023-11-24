@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <cstdint>
 #include <cstring>
 #include <string>
@@ -6,7 +6,8 @@
 
 using u32 = uint32_t;
 using namespace std;
-using size_type = uint32_t;
+
+
 
 template <typename T>
 class DoubleBracketGrid final {
@@ -26,19 +27,17 @@ public:
     }
 };
 
-
-
 template <typename T, size_t N>
-class Grid final {
+class Grid{
 private:
 
     //using value_type = T;
 
 public:
-    using size_type = u32;
-    size_type size;
-    Grid<T, N - 1> g;
     T* data = nullptr;
+    using size_type = u32;
+    size_type* sizes = nullptr;
+    Grid<T, N - 1> g;
 
 
     Grid(const Grid<T, N>& grid) = default; //конструктор копирования
@@ -48,39 +47,174 @@ public:
     Grid<T, N>& operator=(Grid<T, N>&&) = default;
 
 
-    Grid() : size(0), g(new Grid<T, N - 1>()), data(nullptr) {}
+    Grid()
+    {
+        cerr << "1\n";
+        sizes = nullptr;
+        data = nullptr;
+        
+    }
     ~Grid() { delete data; }
 
-    Grid(T const& t) : size(1), g(new Grid<T, N - 1>(t)), data(new T[1]{ t }) { } //fixed
-
-    template <typename ...Args>
-    Grid(size_type first, Args... args) : size(first), g(args...) { }
-
-
-    template <typename ...Args> 
-    Grid(size_type first, Args... args, const T& t)
+    Grid(T const& t)
     {
-        Grid(first, args..., t, data);
+        cerr << "2\n";
+        if (sizes == nullptr)
+        {
+            sizes = new size_type[N + 1]{ 0 };
+            *sizes = N;
+        }
+        for (int i = 0; i < N; ++i)
+            *(sizes + i + 1) = 1;
     }
 
     template <typename ...Args>
-    Grid(size_type first, Args... args, const T& t, T* data) : size(first), g(args..., t)
+    Grid(size_type* _sizes, size_type first, Args... args): sizes(_sizes)
     {
-        if (data == nullptr)
+        cerr << "3\n";
+        if (sizes == nullptr)
         {
-            data = new size_type[1]{ first };
-            cerr << "one " << size << '\n';
+            sizes = new size_type[N + 1]{ 0 };
+            *sizes = N;
+            *(sizes+N) = first;
+        }
+        
+        else
+        {
+            *(sizes + N) = first;
+        }
+        for (size_t i = 0; i < sizes[0]+1; ++i){
+        cerr << sizes[i];}
+        cerr << '\n' << first << '\n';
+        Grid<T, N - 1> g(sizes, args...);
+    }
+
+    template <typename ...Args>
+    Grid(size_type* _sizes, size_type first, Args... args, const T& t): sizes(_sizes)
+    {
+        cerr << "4\n";
+        if (sizes == nullptr)
+        {
+            sizes = new size_type[N + 1]{ first };
+            *sizes = N;
         }
         else
         {
-            *data *= first;
-            cerr << "ne one " << size << '\n';
-            if (N == 2)
-            {
-                cerr << "все плохо";
-                throw(3);
-            }
+            *(sizes + N) = first;
         }
+        Grid<T, N - 1> g(sizes, args..., t);
+    }
+
+    /*DoubleBracketGrid<T> operator[](size_type y_idx) {
+        if (y_idx > y_size - 1) {
+            throw(1);
+        }
+        return DoubleBracketGrid<T>(&data[y_idx * x_size], x_size);
+    }
+
+
+    
+    T& operator()(size_type y_idx, size_type x_idx) const {
+        return data[y_idx * x_size + x_idx];
+    }
+
+    Grid<T>& operator=(T const& t) {
+        for (auto it = data, end = data + x_size * y_size; it != end; ++it)
+        {
+            *it = t;
+        }
+        return*this;
+    }
+
+    size_type get_y_size() const { return y_size; }
+    size_type get_x_size() const { return x_size; }*/
+};
+
+
+template <typename T>
+class Grid<T, 2> {
+private:
+
+    //using value_type = T;
+
+public:
+    T* data = nullptr;
+    using size_type = u32;
+    size_type* sizes = nullptr;
+
+
+    Grid(const Grid<T, 2>& grid) = default; //конструктор копирования
+    Grid<T, 2>& operator=(Grid<T, 2> const& other) = default; //оператор копирования
+
+    Grid(Grid<T, 2>&&) = default;
+    Grid<T, 2>& operator=(Grid<T, 2>&&) = default;
+
+
+    Grid()
+    {
+        cerr << "5\n";
+        data = nullptr;
+        sizes = nullptr;
+    }
+    ~Grid() { delete data; }
+
+    Grid(T const& t)
+    {
+        cerr << "6\n";
+        if (sizes == nullptr)
+        {
+            sizes = new size_type[2 + 1]{ 0 };
+            *sizes = 2;
+        }
+        for (int i = 0; i < 2; ++i)
+            *(sizes + i + 1) = 1;
+        data = new T[*(sizes + 1) * *(sizes+2)]{ t };
+    }
+
+
+    Grid(size_type* _sizes, size_type first, size_type second) : sizes(_sizes)
+    {
+        cerr << "7\n";
+        if (sizes == nullptr)
+        {
+            sizes = new size_type[2 + 1]{ 0 };
+            *sizes = 2;
+        }
+        else
+        {
+            *(sizes + 1) = first;
+            *(sizes + 2) = second;
+        }
+        size_type total_size = 1;
+        for (size_type i = 1; i < (*sizes) + 1; ++i)
+        {
+            total_size *= *(sizes + i);
+        }
+        data = new T[total_size]{ 0 };
+    }
+
+    Grid(size_type* _sizes, size_type first, size_type second, const T& t) : sizes(_sizes)
+    {
+        cerr << "8\n";
+        if (sizes == nullptr)
+        {
+            sizes = new size_type[2 + 1]{ 0 };
+            *sizes = 2;
+        }
+        else
+        {
+            *(sizes + 1) = first;
+            *(sizes + 2) = second;
+        }
+        size_t total_size = 1;
+        for (int i = 1; i < (*sizes) + 1; ++i)
+        {
+            total_size *= *(sizes + i);
+        }
+        for (size_t i = 0; i < sizes[0]+1; ++i){
+        cerr << sizes[i];}
+        cerr << "HER\n" << total_size << "\n";
+        data = new T[total_size]{ t };
     }
 
     /*DoubleBracketGrid<T> operator[](size_type y_idx) {
@@ -105,88 +239,15 @@ public:
     }
 
     size_type get_y_size() const { return y_size; }
-    size_type get_x_size() const { return x_size; }
-    size_type get_size()
-    {
-        return size * get_size();
-    }*/
+    size_type get_x_size() const { return x_size; }*/
 };
-
-
-template <typename T>
-class Grid<T, 2> final {
-private:
-
-    //using value_type = T;
-
-public:
-    T* data;
-    using size_type = u32;
-    size_type y_size, x_size;
-
-
-    Grid(const Grid<T, 2>& grid) = default; //конструктор копирования
-    Grid<T, 2>& operator=(Grid<T, 2> const& other) = default; //оператор копирования
-
-    Grid(Grid<T, 2>&&) = default;
-    Grid<T, 2>& operator=(Grid<T, 2>&&) = default;
-
-    Grid() : y_size(0), x_size(0), data(nullptr) {}
-    ~Grid() { delete data; }
-
-    Grid(T const& t) : y_size(1), x_size(1), data(new T[1]{ t }) { } // done 1.1
-    Grid(size_type y_size, size_type x_size) : data(new T[x_size * y_size]{ 0 }), y_size(y_size), x_size(x_size) {}  // done 1.2
-    Grid(size_type y_size, size_type x_size, const T& t) : y_size(y_size), x_size(x_size) { // done 1.3
-        data = new T[y_size * x_size];
-        for (size_t i = 0; i < x_size * y_size; ++i) { *(data + i) = t; }
-    }
-
-    DoubleBracketGrid<T> operator[](size_type y_idx) {
-        if (y_idx > y_size - 1) {
-            throw(1);
-        }
-        return DoubleBracketGrid<T>(&data[y_idx * x_size], x_size);
-    }
-
-
-    T& operator()(size_type y_idx, size_type x_idx) const {
-        return data[y_idx * x_size + x_idx];
-    }
-
-    Grid<T, 2>& operator=(T const& t) {
-        for (auto it = data, end = data + x_size * y_size; it != end; ++it)
-        {
-            *it = t;
-        }
-        return*this;
-    }
-
-    size_type get_y_size() const { return y_size; }
-    size_type get_x_size() const { return x_size; }
-    size_type get_size()
-    {
-        return x_size * y_size;
-    }
-};
-
-
-
 
 
 int main()
 {
-    try {
-        Grid<int, 5> grid(1, 2, 3, 4, 5, 77);
-    }
-    catch (int& e)
-    {
-        if (e == 3)
-        {
-            cerr << "все плохо 2";
-        }
-    }
-
     
+//    Grid<int, 3> g(1);
+   Grid<int, 3> g1(nullptr, 1, 1, 1);
 
     return 0;
 }
