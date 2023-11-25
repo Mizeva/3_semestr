@@ -56,7 +56,8 @@ public:
     }
     ~Grid() { delete data; }
 
-    Grid(T* _data, T const& t): data(_data)
+    
+    Grid(T const& t, T* _data = nullptr): data(_data)
     {
         cerr << "2\n";
         if (sizes == nullptr)
@@ -69,6 +70,8 @@ public:
         Grid<T, N - 1> g(data, t);
     }
 
+    template <typename ...Args>
+    Grid(size_type first, Args... args) : Grid(nullptr, nullptr, first, args...) {}
     template <typename ...Args>
     Grid(T* _data, size_type* _sizes, size_type first, Args... args) : sizes(_sizes), data(_data)
     {
@@ -91,6 +94,8 @@ public:
         Grid<T, N - 1> g(data, sizes, args...);
     }
 
+    template <typename ...Args>
+    Grid(size_type first, Args... args, const T& t) : Grid(nullptr, nullptr, first, args...) {}
     template <typename ...Args>
     Grid(T* _data, size_type* _sizes, size_type first, Args... args, const T& t) : sizes(_sizes), data(_data)
     {
@@ -160,6 +165,7 @@ public:
     }
     ~Grid() { delete data; }
 
+    Grid(T const& t): Grid(nullptr, t) {}
     Grid(T* _data, T const& t): data(_data)
     {
         cerr << "6\n";
@@ -183,7 +189,7 @@ public:
         }
     }
 
-
+    Grid(size_type first, size_type second) : Grid(nullptr, nullptr, first, second) {}
     Grid(T* _data, size_type* _sizes, size_type first, size_type second) : sizes(_sizes), data(_data)
     {
         cerr << "7\n";
@@ -203,10 +209,11 @@ public:
             total_size *= *(sizes + i);
         }
         data = new T[total_size]{ 0 };
-        for (int i = 0; i < total_size; ++i)
+        //for (int i = 0; i < total_size; ++i)
             //cerr << *(data + i);
     }
 
+    Grid(size_type first, size_type second, const T& t) : Grid(nullptr, nullptr, first, second) {}
     Grid(T* _data, size_type* _sizes, size_type first, size_type second, const T& t) : sizes(_sizes), data(_data)
     {
         cerr << "8\n";
@@ -267,8 +274,8 @@ public:
 int main()
 {
 
-    Grid<int, 3> g(nullptr, 1);
-    //Grid<int, 3> g1(nullptr, nullptr, 1, 2, 3);
+    //Grid<int, 3> g(1);
+    //Grid<int, 3> g1(1, 2, 3);
 
     return 0;
 }
