@@ -49,7 +49,7 @@ public:
 
     Grid()
     {
-        cerr << "1\n";
+        //cerr << "1\n";
         sizes = nullptr;
         data = nullptr;
 
@@ -59,7 +59,7 @@ public:
 
     Grid(T const& t, T* _data = nullptr) : data(_data)
     {
-        cerr << "2\n";
+        //cerr << "2\n";
         if (sizes == nullptr)
         {
             sizes = new size_type[N + 1]{ 0 };
@@ -75,7 +75,7 @@ public:
     template <typename ...Args>
     Grid(T* _data, size_type* _sizes, size_type first, Args... args) : sizes(_sizes), data(_data)
     {
-        cerr << "3\n";
+        //cerr << "3\n";
         if (sizes == nullptr)
         {
             sizes = new size_type[N + 1]{ 0 };
@@ -99,7 +99,7 @@ public:
     template <typename ...Args>
     Grid(T* _data, size_type* _sizes, size_type first, Args... args, const T& t) : sizes(_sizes), data(_data)
     {
-        cerr << "4\n";
+        //cerr << "4\n";
         if (sizes == nullptr)
         {
             sizes = new size_type[N + 1]{ first };
@@ -164,7 +164,7 @@ public:
 
     Grid()
     {
-        cerr << "5\n";
+        //cerr << "5\n";
         data = nullptr;
         sizes = nullptr;
     }
@@ -173,7 +173,7 @@ public:
     Grid(T const& t) : Grid(nullptr, t) {}
     Grid(T* _data, T const& t) : data(_data)
     {
-        cerr << "6\n";
+        //cerr << "6\n";
         if (sizes == nullptr)
         {
             sizes = new size_type[2 + 1]{ 0 };
@@ -197,7 +197,7 @@ public:
     Grid(size_type first, size_type second) : Grid(nullptr, nullptr, first, second) {}
     Grid(T* _data, size_type* _sizes, size_type first, size_type second) : sizes(_sizes), data(_data)
     {
-        cerr << "7\n";
+        //cerr << "7\n";
         if (sizes == nullptr)
         {
             sizes = new size_type[2 + 1]{ 0 };
@@ -221,7 +221,7 @@ public:
     Grid(size_type first, size_type second, const T& t) : Grid(nullptr, nullptr, first, second) {}
     Grid(T* _data, size_type* _sizes, size_type first, size_type second, const T& t) : sizes(_sizes), data(_data)
     {
-        cerr << "8\n";
+        //cerr << "8\n";
         if (sizes == nullptr)
         {
             sizes = new size_type[2 + 1]{ 0 };
