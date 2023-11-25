@@ -10,20 +10,20 @@ using namespace std;
 
 
 template <typename T>
-class DoubleBracketGrid final {
+class DoubleBracketGrid final {                 // для последней итерации
 private:
     T* row;
     using size_type = u32;
-    size_type x_size;
+    size_type size;
 public:
-    DoubleBracketGrid(T* row, size_type x_size) : row(row), x_size(x_size) {}
+    DoubleBracketGrid(T* row, size_type _size) : row(row), size(_size) {}
 
-    T& operator[](size_type x_idx) const {
-        if (x_idx > x_size - 1)
+    T& operator[](size_type _idx) const {
+        if (_idx > size - 1)
         {
             throw(2);
         }
-        return row[x_idx];
+        return row[_idx];
     }
 };
 
@@ -56,8 +56,8 @@ public:
     }
     ~Grid() { delete data; }
 
-    
-    Grid(T const& t, T* _data = nullptr): data(_data)
+
+    Grid(T const& t, T* _data = nullptr) : data(_data)
     {
         cerr << "2\n";
         if (sizes == nullptr)
@@ -112,15 +112,20 @@ public:
         Grid<T, N - 1> g(data, sizes, args..., t);
     }
 
-    /*DoubleBracketGrid<T> operator[](size_type y_idx) {
-        if (y_idx > y_size - 1) {
-            throw(1);
-        }
-        return DoubleBracketGrid<T>(&data[y_idx * x_size], x_size);
-    }
+    //DoubleBracketGrid<T> operator[](size_type _idx) {
+    //    if (_idx > *(sizes + N)) {
+    //        throw(1);
+    //    }
+    //    size_type part_size = 1;
+    //    for (int i = 0; i < N; ++i)
+    //    {
+
+    //    }
+    //    //return DoubleBracketGrid<T>(&data[y_idx * x_size], x_size);
+    //}
 
 
-
+    /*
     T& operator()(size_type y_idx, size_type x_idx) const {
         return data[y_idx * x_size + x_idx];
     }
@@ -165,8 +170,8 @@ public:
     }
     ~Grid() { delete data; }
 
-    Grid(T const& t): Grid(nullptr, t) {}
-    Grid(T* _data, T const& t): data(_data)
+    Grid(T const& t) : Grid(nullptr, t) {}
+    Grid(T* _data, T const& t) : data(_data)
     {
         cerr << "6\n";
         if (sizes == nullptr)
@@ -245,15 +250,15 @@ public:
         }
     }
 
-    /*DoubleBracketGrid<T> operator[](size_type y_idx) {
-        if (y_idx > y_size - 1) {
+    /*DoubleBracketGrid<T> operator[](size_type _idx) {
+        if (_idx > *(sizes + 2) - 1) {
             throw(1);
         }
-        return DoubleBracketGrid<T>(&data[y_idx * x_size], x_size);
-    }
+        return DoubleBracketGrid<T>(&data[_idx * *(sizes + 1)], *(sizes + 1));
+    }*/
 
 
-
+    /*
     T& operator()(size_type y_idx, size_type x_idx) const {
         return data[y_idx * x_size + x_idx];
     }
