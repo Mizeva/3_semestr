@@ -28,7 +28,7 @@ public:
 };
 
 template <typename T, size_t N>
-class Grid{
+class Grid {
 private:
 
     //using value_type = T;
@@ -52,11 +52,11 @@ public:
         cerr << "1\n";
         sizes = nullptr;
         data = nullptr;
-        
+
     }
     ~Grid() { delete data; }
 
-    Grid(T const& t)
+    Grid(T* _data, T const& t): data(_data)
     {
         cerr << "2\n";
         if (sizes == nullptr)
@@ -66,31 +66,33 @@ public:
         }
         for (int i = 0; i < N; ++i)
             *(sizes + i + 1) = 1;
+        Grid<T, N - 1> g(data, t);
     }
 
     template <typename ...Args>
-    Grid(size_type* _sizes, size_type first, Args... args): sizes(_sizes)
+    Grid(T* _data, size_type* _sizes, size_type first, Args... args) : sizes(_sizes), data(_data)
     {
         cerr << "3\n";
         if (sizes == nullptr)
         {
             sizes = new size_type[N + 1]{ 0 };
             *sizes = N;
-            *(sizes+N) = first;
+            *(sizes + N) = first;
         }
-        
+
         else
         {
             *(sizes + N) = first;
         }
-        for (size_t i = 0; i < sizes[0]+1; ++i){
-        cerr << sizes[i];}
-        cerr << '\n' << first << '\n';
-        Grid<T, N - 1> g(sizes, args...);
+        /*for (size_t i = 0; i < sizes[0] + 1; ++i) {
+            cerr << sizes[i];
+        }
+        //cerr << '\n' << first << '\n';*/
+        Grid<T, N - 1> g(data, sizes, args...);
     }
 
     template <typename ...Args>
-    Grid(size_type* _sizes, size_type first, Args... args, const T& t): sizes(_sizes)
+    Grid(T* _data, size_type* _sizes, size_type first, Args... args, const T& t) : sizes(_sizes), data(_data)
     {
         cerr << "4\n";
         if (sizes == nullptr)
@@ -102,7 +104,7 @@ public:
         {
             *(sizes + N) = first;
         }
-        Grid<T, N - 1> g(sizes, args..., t);
+        Grid<T, N - 1> g(data, sizes, args..., t);
     }
 
     /*DoubleBracketGrid<T> operator[](size_type y_idx) {
@@ -113,7 +115,7 @@ public:
     }
 
 
-    
+
     T& operator()(size_type y_idx, size_type x_idx) const {
         return data[y_idx * x_size + x_idx];
     }
@@ -158,7 +160,7 @@ public:
     }
     ~Grid() { delete data; }
 
-    Grid(T const& t)
+    Grid(T* _data, T const& t): data(_data)
     {
         cerr << "6\n";
         if (sizes == nullptr)
@@ -166,13 +168,23 @@ public:
             sizes = new size_type[2 + 1]{ 0 };
             *sizes = 2;
         }
-        for (int i = 0; i < 2; ++i)
-            *(sizes + i + 1) = 1;
-        data = new T[*(sizes + 1) * *(sizes+2)]{ t };
+        for (int i = 1; i < 2 + 1; ++i)
+            *(sizes + i) = 1;
+        size_type total_size = 1;
+        for (size_type i = 1; i < (*sizes) + 1; ++i)
+        {
+            total_size *= *(sizes + i);
+        }
+        data = new T[total_size]{ 0 };
+        for (int i = 0; i < total_size; ++i)
+        {
+            *(data + i) = t;
+            cerr << *(data + i);
+        }
     }
 
 
-    Grid(size_type* _sizes, size_type first, size_type second) : sizes(_sizes)
+    Grid(T* _data, size_type* _sizes, size_type first, size_type second) : sizes(_sizes), data(_data)
     {
         cerr << "7\n";
         if (sizes == nullptr)
@@ -191,9 +203,11 @@ public:
             total_size *= *(sizes + i);
         }
         data = new T[total_size]{ 0 };
+        for (int i = 0; i < total_size; ++i)
+            //cerr << *(data + i);
     }
 
-    Grid(size_type* _sizes, size_type first, size_type second, const T& t) : sizes(_sizes)
+    Grid(T* _data, size_type* _sizes, size_type first, size_type second, const T& t) : sizes(_sizes), data(_data)
     {
         cerr << "8\n";
         if (sizes == nullptr)
@@ -211,10 +225,17 @@ public:
         {
             total_size *= *(sizes + i);
         }
-        for (size_t i = 0; i < sizes[0]+1; ++i){
-        cerr << sizes[i];}
-        cerr << "HER\n" << total_size << "\n";
-        data = new T[total_size]{ t };
+        /*for (size_t i = 0; i < sizes[0] + 1; ++i) {
+            cerr << sizes[i];
+        }*/
+        //cerr << "ts\n" << total_size << "\n";
+        data = new T[total_size]{ 0 };
+
+        for (int i = 0; i < total_size; ++i)
+        {
+            *(data + i) = t;
+            //cerr << *(data + i);
+        }
     }
 
     /*DoubleBracketGrid<T> operator[](size_type y_idx) {
@@ -245,9 +266,9 @@ public:
 
 int main()
 {
-    
-//    Grid<int, 3> g(1);
-   Grid<int, 3> g1(nullptr, 1, 1, 1);
+
+    Grid<int, 3> g(nullptr, 1);
+    //Grid<int, 3> g1(nullptr, nullptr, 1, 2, 3);
 
     return 0;
 }
